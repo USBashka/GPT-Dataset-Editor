@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://ce1141et44dfv"]
+
+[ext_resource type="Script" path="res://scenes/examples_list.gd" id="1_e617l"]
+
+[node name="ExamplesList" type="VBoxContainer"]
+theme_override_constants/separation = 0
+script = ExtResource("1_e617l")

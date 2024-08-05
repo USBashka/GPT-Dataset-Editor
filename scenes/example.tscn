@@ -1,0 +1,28 @@
+[gd_scene load_steps=2 format=3 uid="uid://dln8nn8a18jho"]
+
+[ext_resource type="Script" path="res://scenes/example.gd" id="1_wraea"]
+
+[node name="Example" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+script = ExtResource("1_wraea")
+
+[node name="Chat" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="Add" type="Button" parent="MarginContainer"]
+custom_minimum_size = Vector2(320, 64)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "+ Add message"

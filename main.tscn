@@ -1,8 +1,20 @@
-[gd_scene load_steps=5 format=3 uid="uid://csgkbpwfrrgjh"]
+[gd_scene load_steps=9 format=3 uid="uid://csgkbpwfrrgjh"]
 
 [ext_resource type="Texture2D" uid="uid://1mumgoo3msk8" path="res://assets/new_chat.svg" id="1_cgtub"]
 [ext_resource type="Script" path="res://main.gd" id="1_to2d6"]
 [ext_resource type="Texture2D" uid="uid://dbldyuuwcaser" path="res://assets/pexels-stywo-1261728.jpg" id="2_gi6n6"]
+[ext_resource type="PackedScene" uid="uid://ce1141et44dfv" path="res://scenes/examples_list.tscn" id="4_gn71v"]
+[ext_resource type="PackedScene" uid="uid://dln8nn8a18jho" path="res://scenes/example.tscn" id="4_kpsvn"]
+
+[sub_resource type="InputEventKey" id="InputEventKey_7xo67"]
+device = -1
+command_or_control_autoremap = true
+shift_pressed = true
+keycode = 65
+unicode = 97
+
+[sub_resource type="Shortcut" id="Shortcut_jbidm"]
+events = [SubResource("InputEventKey_7xo67")]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6aa38"]
 bg_color = Color(0.129412, 0.129412, 0.129412, 0.705882)
@@ -29,13 +41,14 @@ expand_mode = 1
 stretch_mode = 6
 
 [node name="ColorRect" type="ColorRect" parent="Background"]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0)
+color = Color(0, 0, 0, 1)
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -91,6 +104,17 @@ item_1/id = 1
 item_2/text = "Default"
 item_2/id = 2
 
+[node name="Tools" type="PopupMenu" parent="VBoxContainer/PanelContainer/HBoxContainer/MenuBar"]
+item_count = 4
+item_0/text = "Find"
+item_0/id = 0
+item_1/text = "Replace"
+item_1/id = 1
+item_2/text = "Remove duplicates"
+item_2/id = 2
+item_3/text = "Set system prompt"
+item_3/id = 3
+
 [node name="Help" type="PopupMenu" parent="VBoxContainer/PanelContainer/HBoxContainer/MenuBar"]
 item_count = 3
 item_0/text = "About (GitHub)"
@@ -119,9 +143,11 @@ layout_mode = 2
 
 [node name="NewExample" type="Button" parent="VBoxContainer/HSplitContainer/Left/VBoxContainer"]
 layout_mode = 2
-text = "New example"
+shortcut = SubResource("Shortcut_jbidm")
+text = "New example (Ctrl+Shift+A)"
 icon = ExtResource("1_cgtub")
 flat = true
+icon_alignment = 2
 
 [node name="HSeparator" type="HSeparator" parent="VBoxContainer/HSplitContainer/Left/VBoxContainer"]
 layout_mode = 2
@@ -131,15 +157,21 @@ layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HSplitContainer/Left/VBoxContainer/ScrollContainer"]
+[node name="ExamplesList" parent="VBoxContainer/HSplitContainer/Left/VBoxContainer/ScrollContainer" instance=ExtResource("4_gn71v")]
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="Center" type="PanelContainer" parent="VBoxContainer/HSplitContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_6aa38")
 
-[node name="CenterContainer" type="CenterContainer" parent="VBoxContainer/HSplitContainer/Center"]
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/HSplitContainer/Center"]
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="Example" parent="VBoxContainer/HSplitContainer/Center/ScrollContainer" instance=ExtResource("4_kpsvn")]
 layout_mode = 2
 
 [connection signal="id_pressed" from="VBoxContainer/PanelContainer/HBoxContainer/MenuBar/File" to="." method="_on_file_id_pressed"]
@@ -148,3 +180,5 @@ layout_mode = 2
 [connection signal="id_pressed" from="VBoxContainer/PanelContainer/HBoxContainer/MenuBar/Settings/Theme" to="." method="_on_theme_id_pressed"]
 [connection signal="id_pressed" from="VBoxContainer/PanelContainer/HBoxContainer/MenuBar/Settings/Background" to="." method="_on_background_id_pressed"]
 [connection signal="id_pressed" from="VBoxContainer/PanelContainer/HBoxContainer/MenuBar/Help" to="." method="_on_help_id_pressed"]
+[connection signal="pressed" from="VBoxContainer/HSplitContainer/Left/VBoxContainer/NewExample" to="." method="_on_new_example_pressed"]
+[connection signal="example_selected" from="VBoxContainer/HSplitContainer/Left/VBoxContainer/ScrollContainer/ExamplesList" to="." method="_on_examples_list_example_selected"]

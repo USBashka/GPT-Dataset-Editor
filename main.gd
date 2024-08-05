@@ -8,9 +8,19 @@ extends Control
 @onready var file_menu: PopupMenu = $VBoxContainer/PanelContainer/HBoxContainer/MenuBar/File
 @onready var settings: PopupMenu = $VBoxContainer/PanelContainer/HBoxContainer/MenuBar/Settings
 @onready var help: PopupMenu = $VBoxContainer/PanelContainer/HBoxContainer/MenuBar/Help
+@onready var file_name: Label = $VBoxContainer/PanelContainer/HBoxContainer/FileName
+
+@onready var examples_list: VBoxContainer = $VBoxContainer/HSplitContainer/Left/VBoxContainer/ScrollContainer/ExamplesList
+
+@onready var example: VBoxContainer = $VBoxContainer/HSplitContainer/Center/ScrollContainer/Example
 
 
 var color_popup: Window
+var current_file: String = "untitled.jsonl"
+var data: Array
+var current_example = 0
+
+const FILE_OPEN = preload("res://scenes/file_open.tscn")
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -18,21 +28,21 @@ func _ready() -> void:
 	if bg != "default":
 		if bg[0] == "#":
 			bg_color.color = Color(bg)
+			bg_color.show()
 		else:
 			background.texture = load_image(bg)
 	bind_shortcuts_to_menu(file_menu, 0, "file_new")
 	bind_shortcuts_to_menu(file_menu, 1, "file_open")
 	bind_shortcuts_to_menu(file_menu, 2, "file_save")
 	bind_shortcuts_to_menu(file_menu, 3, "file_save_as")
-	settings.add_submenu_item("Language", "Language")
-	settings.add_submenu_item("Theme", "Theme")
-	settings.add_submenu_item("Background", "Background")
+	settings.add_submenu_item(tr("Language"), "Language")
+	settings.add_submenu_item(tr("Theme"), "Theme")
+	settings.add_submenu_item(tr("Background"), "Background")
 	bind_shortcuts_to_menu(help, 0, "help")
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
+	
+	if Settings.state.file != "untitled.jsonl":
+		open_file(Settings.state.file)
+		open_example(Settings.state.example)
 
 
 func _input(event: InputEvent) -> void:
@@ -41,10 +51,23 @@ func _input(event: InputEvent) -> void:
 		DisplayServer.WINDOW_MODE_FULLSCREEN
 		if !DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN 
 		else DisplayServer.WINDOW_MODE_MAXIMIZED)
+	elif event.is_action_pressed("next_example"):
+		current_example +=1
+		open_example(current_example)
 
 
 func _on_file_id_pressed(id: int) -> void:
-	print(id)
+	match id:
+		0: #New
+			pass
+		1: #Open
+			var file_open = FILE_OPEN.instantiate()
+			file_open.file_selected.connect(_on_file_open)
+			file_open.popup()
+
+func _on_file_open(file: String) -> void:
+	open_file(file)
+	open_example(current_example)
 
 
 func _on_settings_id_pressed(id: int) -> void:
@@ -83,8 +106,9 @@ func _on_background_id_pressed(id: int) -> void:
 			color_popup = Window.new()
 			color_popup.close_requested.connect(_on_bg_color_close)
 			color_popup.title = tr("Select background color")
-			color_popup.size = Vector2(298, 580)
+			color_popup.min_size = Vector2(298, 580)
 			var color_dialog = ColorPicker.new()
+			color_dialog.color = bg_color.color
 			color_dialog.color_changed.connect(_on_bg_color_selected)
 			color_popup.add_child(color_dialog)
 			add_child(color_popup)
@@ -99,10 +123,11 @@ func _on_bg_image_selected(image: String):
 	background.texture = load_image(image)
 	Settings.s.background = image
 	Settings.save_settings()
-	bg_color.color = Color.TRANSPARENT
+	bg_color.hide()
 
 func _on_bg_color_selected(color: Color):
 	bg_color.color = color
+	bg_color.show()
 	Settings.s.background = "#" + color.to_html()
 	Settings.save_settings()
 
@@ -126,3 +151,29 @@ func load_image(path: String) -> Texture:
 	else:
 		print("Failed to load image: ", path)
 		return null
+
+
+func open_file(file: String) -> void:
+	file_name.text = file
+	current_file = file
+	data = Importer.import_jsonl(file)
+	current_example = 0
+	examples_list.populate_list(data)
+	Settings.state.file = file
+	Settings.save_settings()
+
+
+func open_example(index: int) -> void:
+	example.clear_chat()
+	example.populate_chat(data[index]["messages"])
+	Settings.state.example = index
+	Settings.save_settings()
+
+
+func _on_new_example_pressed() -> void:
+	print("SOS")
+
+
+func _on_examples_list_example_selected(index: int) -> void:
+	current_example = index
+	open_example(current_example)
