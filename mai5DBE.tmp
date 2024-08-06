@@ -181,7 +181,8 @@ ok_button_text = "Remove"
 
 [node name="ReplaceMenu" parent="." instance=ExtResource("6_104nm")]
 visible = false
-layout_mode = 1
+layout_mode = 0
+anchors_preset = 0
 
 [connection signal="id_pressed" from="VBoxContainer/PanelContainer/HBoxContainer/MenuBar/File" to="." method="_on_file_id_pressed"]
 [connection signal="id_pressed" from="VBoxContainer/PanelContainer/HBoxContainer/MenuBar/Settings" to="." method="_on_settings_id_pressed"]

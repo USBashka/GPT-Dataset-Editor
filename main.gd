@@ -13,6 +13,7 @@ extends Control
 @onready var examples_list: VBoxContainer = $VBoxContainer/HSplitContainer/Left/VBoxContainer/ScrollContainer/ExamplesList
 
 @onready var example: VBoxContainer = $VBoxContainer/HSplitContainer/Center/ScrollContainer/Example
+@onready var replace_menu: PanelContainer = $ReplaceMenu
 
 
 var color_popup: Window
@@ -24,6 +25,7 @@ const FILE_OPEN = preload("res://scenes/file_open.tscn")
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	get_window().min_size = Vector2i(900, 600)
 	var bg = Settings.s.background
 	if bg != "default":
 		if bg[0] == "#":
@@ -64,6 +66,8 @@ func _on_file_id_pressed(id: int) -> void:
 			var file_open = FILE_OPEN.instantiate()
 			file_open.file_selected.connect(_on_file_open)
 			file_open.popup()
+		2: #Save
+			Exporter.export_jsonl(current_file, data)
 
 func _on_file_open(file: String) -> void:
 	open_file(file)
@@ -177,3 +181,15 @@ func _on_new_example_pressed() -> void:
 func _on_examples_list_example_selected(index: int) -> void:
 	current_example = index
 	open_example(current_example)
+
+
+func _on_tools_id_pressed(id: int) -> void:
+	match id:
+		0: #Find
+			pass
+		1: #Replace
+			replace_menu.show()
+
+
+func _on_replace_menu_replace(from: String, to: String) -> void:
+	Tools.replace(data, from, to)

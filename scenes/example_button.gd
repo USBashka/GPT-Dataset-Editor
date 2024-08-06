@@ -11,4 +11,4 @@ func _pressed() -> void:
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.pressed and event.button_index == MouseButton.MOUSE_BUTTON_RIGHT:
-			queue_free()
+			examples_list.remove_example_request(get_index())

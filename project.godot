@@ -19,6 +19,8 @@ config/icon="res://icon.svg"
 
 Settings="*res://singletons/settings.gd"
 Importer="*res://singletons/importer.gd"
+Exporter="*res://singletons/exporter.gd"
+Tools="*res://singletons/tools.gd"
 
 [filesystem]
 
