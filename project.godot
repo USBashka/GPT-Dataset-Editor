@@ -21,6 +21,7 @@ Settings="*res://singletons/settings.gd"
 Importer="*res://singletons/importer.gd"
 Exporter="*res://singletons/exporter.gd"
 Tools="*res://singletons/tools.gd"
+Notification="*res://singletons/notification.tscn"
 
 [filesystem]
 

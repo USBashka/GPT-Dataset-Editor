@@ -1,8 +1,10 @@
-[gd_scene load_steps=10 format=3 uid="uid://csgkbpwfrrgjh"]
+[gd_scene load_steps=12 format=3 uid="uid://csgkbpwfrrgjh"]
 
 [ext_resource type="Texture2D" uid="uid://1mumgoo3msk8" path="res://assets/new_chat.svg" id="1_cgtub"]
 [ext_resource type="Script" path="res://main.gd" id="1_to2d6"]
 [ext_resource type="Texture2D" uid="uid://dbldyuuwcaser" path="res://assets/pexels-stywo-1261728.jpg" id="2_gi6n6"]
+[ext_resource type="Texture2D" uid="uid://db52iapybajnd" path="res://assets/flags/usa.svg" id="3_ei05h"]
+[ext_resource type="Texture2D" uid="uid://dse32b5spj1cr" path="res://assets/flags/russia.svg" id="4_0mtjn"]
 [ext_resource type="PackedScene" uid="uid://ce1141et44dfv" path="res://scenes/examples_list.tscn" id="4_gn71v"]
 [ext_resource type="PackedScene" uid="uid://dln8nn8a18jho" path="res://scenes/example.tscn" id="4_kpsvn"]
 [ext_resource type="PackedScene" uid="uid://cpmguwaxnse6o" path="res://scenes/replace_menu.tscn" id="6_104nm"]
@@ -82,12 +84,18 @@ item_3/text = "Save as..."
 item_3/id = 3
 
 [node name="Settings" type="PopupMenu" parent="VBoxContainer/PanelContainer/HBoxContainer/MenuBar"]
+item_count = 1
+item_0/text = "Fullscreen"
+item_0/checkable = 1
+item_0/id = 0
 
 [node name="Language" type="PopupMenu" parent="VBoxContainer/PanelContainer/HBoxContainer/MenuBar/Settings"]
 item_count = 2
 item_0/text = "English"
+item_0/icon = ExtResource("3_ei05h")
 item_0/id = 0
 item_1/text = "Русский"
+item_1/icon = ExtResource("4_0mtjn")
 item_1/id = 1
 item_1/disabled = true
 

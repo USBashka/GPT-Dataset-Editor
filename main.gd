@@ -37,6 +37,7 @@ func _ready() -> void:
 	bind_shortcuts_to_menu(file_menu, 1, "file_open")
 	bind_shortcuts_to_menu(file_menu, 2, "file_save")
 	bind_shortcuts_to_menu(file_menu, 3, "file_save_as")
+	bind_shortcuts_to_menu(settings, 0, "fullscreen")
 	settings.add_submenu_item(tr("Language"), "Language")
 	settings.add_submenu_item(tr("Theme"), "Theme")
 	settings.add_submenu_item(tr("Background"), "Background")
@@ -44,16 +45,14 @@ func _ready() -> void:
 	
 	if Settings.state.file != "untitled.jsonl":
 		open_file(Settings.state.file)
-		open_example(Settings.state.example)
+		if Settings.state.example < data.size():
+			current_example = Settings.state.example
+		open_example(current_example)
+		examples_list.get_child(current_example).set_pressed(true)
 
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("fullscreen"):
-		DisplayServer.window_set_mode(
-		DisplayServer.WINDOW_MODE_FULLSCREEN
-		if !DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN 
-		else DisplayServer.WINDOW_MODE_MAXIMIZED)
-	elif event.is_action_pressed("next_example"):
+	if event.is_action_pressed("next_example"):
 		current_example +=1
 		open_example(current_example)
 
@@ -75,7 +74,9 @@ func _on_file_open(file: String) -> void:
 
 
 func _on_settings_id_pressed(id: int) -> void:
-	print(id)
+	match id:
+		0: #Fullscreen
+			toggle_fullscreen()
 
 
 func _on_help_id_pressed(id: int) -> void:
@@ -189,7 +190,25 @@ func _on_tools_id_pressed(id: int) -> void:
 			pass
 		1: #Replace
 			replace_menu.show()
+		2: #Remove duplicates
+			var dupl_count = Tools.remove_duplicates(data)
+			if dupl_count > 0:
+				Notification.notify(tr("Removed %s duplicates")%dupl_count)
+			else:
+				Notification.notify(tr("No duplicates are found"))
 
 
 func _on_replace_menu_replace(from: String, to: String) -> void:
-	Tools.replace(data, from, to)
+	var repl_count = Tools.replace(data, from, to)
+	if repl_count > 0:
+		Notification.notify(tr("Replaced %s substings")%repl_count)
+	else:
+		Notification.notify(tr("Nothing to replace"))
+
+func toggle_fullscreen() -> void:
+	DisplayServer.window_set_mode(
+	DisplayServer.WINDOW_MODE_FULLSCREEN
+	if !DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN 
+	else DisplayServer.WINDOW_MODE_MAXIMIZED)
+	settings.set_item_checked(0, !settings.is_item_checked(0))
+	Settings.s.fullscreen = !Settings.s.fullscreen

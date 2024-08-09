@@ -14,9 +14,9 @@ func import_jsonl(file_path: String) -> Array:
 				if json_data == OK:
 					data_array.append(json.data)
 				else:
-					push_error("Error parsing JSON: %s" % json_data.error_string)
+					Notification.notify(tr("Error parsing JSON"))
 		file.close()
 	else:
-		push_error("Error opening file: %s" % file_path)
+		Notification.notify(tr("Error opening file"))
 
 	return data_array
